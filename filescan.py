@@ -29,8 +29,8 @@ def main():
 
     base_dir = r"\\adgce.local\projects"
     # Choose offices and disciplines to scan, as well as the number of days to look back
-    offices = ["SSC"]
-    disciplines = ["CVL"]
+    offices = ["SSC", "GLC", "SYD", "DWN", "BNE", "MEL"]
+    disciplines = ["CVL", "STR", "ELEC", "HYD", "GEO", "CSS"]
     days_threshold = 25
 
     # Set up master dictionary with empty lists for each discipline in each office
