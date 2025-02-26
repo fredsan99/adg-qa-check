@@ -5,6 +5,22 @@ import json
 import tkinter as tk
 from tkinter import messagebox
 
+# The purpose of this script is to show which disciplines on which projects have modified files
+# in their RCRD CPY directories within the last X days.
+# Define the base directories to scan: All projects located in \\adgce.local\projects.
+# Each office has a folder in the projects directory, as a three letter abbreviation of the location, eg. SSC
+# Each project group has a folder in an office directory, as a five digit number, eg. 21000
+# Each project has a folder in a project group directory, as a five digit number, eg. 21076.
+# Each discipline has a folder in a project directory, eg. CVL or STR.
+# Each discipline folder has a folder called RCRD CPY, which contains files and further subdirectories of interest.
+# Example path: \\adgce.local\projects\SSC\25000\25633\CVL\RCRD CPY\files and further subdirectories.
+
+# This script will scan the RCRD CPY directories for all projects at specified offices and disciplines
+# Which offices and disciplines to scan is specified in lists defined at the top of the script.
+# The script will look for files in the RCRD CPY directories that have been modified within the last 30 days.
+# The end result will be a nested dictionary of the form:
+# {Office: {Discipline: [Matching Directories]}}
+
 # Predefined office locations and disciplines
 OFFICES = ["SSC", "GLC", "SYD", "DWN", "BNE", "MEL"]  # Modify as needed
 DISCIPLINES = ["CVL", "STR", "ELEC", "HYD", "GEO", "CSS"]  # Modify as needed
@@ -94,7 +110,7 @@ def run_script():
     df = master_dict_to_dataframe(master_dict)
     df.to_csv("recently_issued_folders.csv", index=False)
 
-    messagebox.showinfo("Scan Complete", "Results saved to recently_issued_folders.csv!")
+    messagebox.showinfo("Complete", "Results saved to recently_issued_folders.csv")
 
 # Create the GUI window
 root = tk.Tk()
