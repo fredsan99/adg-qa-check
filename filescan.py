@@ -10,9 +10,8 @@ def main():
     os.system('cls' if os.name == 'nt' else 'clear')
 
     # The purpose of this script is to show which disciplines on which projects have modified files
-    # in their RCRD CPY directories within the last 30 days.
-    # Define the base directories to scan. 
-    # All projects located in \\adgce.local\projects.
+    # in their RCRD CPY directories within the last X days.
+    # Define the base directories to scan: All projects located in \\adgce.local\projects.
     # Each office has a folder in the projects directory, as a three letter abbreviation of the location, eg. SSC
     # Each project group has a folder in an office directory, as a five digit number, eg. 21000
     # Each project has a folder in a project group directory, as a five digit number, eg. 21076.
