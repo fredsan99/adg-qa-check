@@ -92,6 +92,8 @@ def scan_directory(rcrd_cpy_dir: str, cutoff_date: datetime.datetime) -> list:
                             if file_mod_time >= cutoff_date:
                                 modified_dirs.add(current_dir)
                                 logging.info(f"Modified file found: {entry.path}")
+                                # Do not continue scanning this directory if a modified file is found
+                                break
                         elif entry.is_dir():
                             stack.append(entry.path)
             except PermissionError:
