@@ -25,8 +25,8 @@ import logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 base_dir = r"\\adgce.local\projects"
-offices = ["BNE", "DWN", "GLC", "HBA", "MEL", "PER", "SSC", "SYD"]
-disciplines = ["CSV", "CVL", "HYD", "STR"]
+offices = ["SSC"]
+disciplines = ["CVL"]
 days_threshold = 31
 
 def get_office_dirs(base_dir: str, offices: list) -> dict:
