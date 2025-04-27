@@ -1,5 +1,11 @@
 ### This script should take a csv file and an excel file as input and merge them into a single table. Both files will contain a list of directories.
-### The program should identify the directories in the CSV file that are not in the Excel file and output them to a new CSV file. 
+### The program should identify the directories in the CSV file that are not in the Excel file and output them to a new CSV file.
+
+### Workflow: 
+# 1 - Copy sheet from teams into "tmp_excel_for_teams.xlsx".
+# 2 - Run filescan.py to get the list of directories in the CSV file "recently_issued_folders.csv".
+# 3 - Run this script to merge the two files into a new CSV file "merged_output.csv".
+# 4 - Copy the "merged output.csv" directories into the excel on teams.
 
 import pandas as pd
 import os
@@ -39,7 +45,8 @@ def merge_dataframes(csv_df: pd.DataFrame, excel_df: pd.DataFrame) -> pd.DataFra
     except Exception as e:
         logging.error(f"Error merging dataframes: {e}")
         return pd.DataFrame()
-    
+
+
 def write_csv_file(file_path: str, df: pd.DataFrame):
     """Writes a DataFrame to a CSV file."""
     try:
@@ -49,19 +56,21 @@ def write_csv_file(file_path: str, df: pd.DataFrame):
     
 
 def main():
+
+    month = "Apr"
     # Set up logging
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     
     # Read the CSV file
-    csv_file_path = r"C:/Users/fsaniter/OneDrive - ADG\Desktop/Temp WIP Files/00_QA/adg-qa-check/recently_issued_folders.csv"
-    excel_file_path = r"C:/Users/fsaniter/OneDrive - ADG\Desktop/Temp WIP Files/00_QA/adg-qa-check/tmp_excel_for_teams.xlsx"
-    excel_tab_name = "Mar"
+    csv_file_path = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/recently_issued_folders.csv"
+    excel_file_path = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/tmp_excel_for_teams.xlsx"
+    excel_tab_name = month
 
     csv_df = read_csv_file(csv_file_path)
-    excel_df = read_excel_file(excel_file_path, "Mar")
+    excel_df = read_excel_file(excel_file_path, excel_tab_name)
 
     new_df = merge_dataframes(csv_df, excel_df)
-    new_csv_file_path = r"C:/Users/fsaniter/OneDrive - ADG\Desktop/Temp WIP Files/00_QA/adg-qa-check/merged_output.csv"
+    new_csv_file_path = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/merged_output.csv"
     write_csv_file(new_csv_file_path, new_df)
     logging.info(f"Output written to {new_csv_file_path}")
 
