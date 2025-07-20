@@ -1,4 +1,4 @@
-### This script should take a csv file and an excel file as input and merge them into a single table. Both files will contain a list of directories.
+### This script takes a csv file and an excel file as input and merges them into a single table. Both files will contain a list of directories.
 ### The program should identify the directories in the CSV file that are not in the Excel file and output them to a new CSV file.
 
 ### Workflow: 
@@ -9,11 +9,14 @@
 
 import pandas as pd
 import os
-import csv
 import openpyxl
 from openpyxl import load_workbook
 import logging
 
+MONTH = "July" # This will be used to read the correct tab from the Excel file.
+CSV_FILE_PATH = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/recently_issued_folders.csv"
+EXCEL_FILE_PATH = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/tmp_excel_for_merging.xlsx"
+NEW_CSV_FILE_PATH = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/merged_output.csv"
 
 def read_csv_file(file_path: str) -> pd.DataFrame:
     """Reads a CSV file and returns a DataFrame."""
@@ -57,23 +60,21 @@ def write_csv_file(file_path: str, df: pd.DataFrame):
 
 def main():
 
-    month = "Apr"
+    month = MONTH
     # Set up logging
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     
-    # Read the CSV file
-    csv_file_path = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/recently_issued_folders.csv"
-    excel_file_path = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/tmp_excel_for_teams.xlsx"
+    csv_file_path = CSV_FILE_PATH
+    excel_file_path = EXCEL_FILE_PATH
+    new_csv_file_path = NEW_CSV_FILE_PATH
     excel_tab_name = month
 
     csv_df = read_csv_file(csv_file_path)
     excel_df = read_excel_file(excel_file_path, excel_tab_name)
 
     new_df = merge_dataframes(csv_df, excel_df)
-    new_csv_file_path = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/merged_output.csv"
     write_csv_file(new_csv_file_path, new_df)
     logging.info(f"Output written to {new_csv_file_path}")
-
 
 
 if __name__ == "__main__":

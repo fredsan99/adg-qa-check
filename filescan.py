@@ -27,7 +27,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 base_dir = r"\\adgce.local\projects"
 offices = ["SSC"]
 disciplines = ["CVL"]
-days_threshold = 28 # The script will check for files modified ON or AFTER the cutoff date.
+days_threshold = 21 # Set this variable to current the day of the month. The script will check for files modified ON or AFTER the cutoff date. 
 
 def get_office_dirs(base_dir: str, offices: list) -> dict:
     # The input to this function is a base directory and a list of office short names (SSC, GLC, etc.).
@@ -37,7 +37,7 @@ def get_office_dirs(base_dir: str, offices: list) -> dict:
     return office_dirs
 
 
-def get_subdirectories(directory: str, filter_digits: int = None) -> list:
+def get_subdirectories(directory: str, filter_digits: int):
     # The input to this function is a directory path and an optional filter for the number of digits.
     # This function will return a list of valid subdirectories inside the given directory.
     # If filter_digits is provided, only directories with the specified digit length are returned.
@@ -62,7 +62,7 @@ def get_subdirectories(directory: str, filter_digits: int = None) -> list:
         return []
 
 
-def get_rcrd_cpy_dirs(discipline: str, project_dir: str) -> str:
+def get_rcrd_cpy_dirs(discipline: str, project_dir: str):
     """Returns the RCRD CPY directory path if it exists."""
     # The input to this function is a single discipline and a single project directory
     # This function will return the directory for the RCRD CPY folder in the project directory.
