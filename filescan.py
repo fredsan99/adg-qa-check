@@ -27,7 +27,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 base_dir = r"\\adgce.local\projects"
 offices = ["SSC"]
 disciplines = ["CVL"]
-days_threshold = 28 # Set this variable to current the day of the month. The script will check for files modified ON or AFTER the cutoff date. 
+days_threshold = 4 # Set this variable to current the day of the month. The script will check for files modified ON or AFTER the cutoff date. 
 
 def get_office_dirs(base_dir: str, offices: list) -> dict:
     # The input to this function is a base directory and a list of office short names (SSC, GLC, etc.).
@@ -148,7 +148,7 @@ def main():
                 for entry in entries:
                     if entry.is_dir() and len(entry.name) == 9 and entry.name[-4] == ".":
                         project_dir = entry.path
-                        project_dirs[index] = project_dir
+                        project_dirs.append(project_dir)
 
             # Get the RCRD CPY directories for each discipline and collect in a dictionary of the form
             # {Office: {Discipline: [Matching Directories]}}}}
