@@ -27,7 +27,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 base_dir = r"\\adgce.local\projects"
 offices = ["SSC"]
 disciplines = ["CVL"]
-days_threshold = 21 # Set this variable to current the day of the month. The script will check for files modified ON or AFTER the cutoff date. 
+days_threshold = 28 # Set this variable to current the day of the month. The script will check for files modified ON or AFTER the cutoff date. 
 
 def get_office_dirs(base_dir: str, offices: list) -> dict:
     # The input to this function is a base directory and a list of office short names (SSC, GLC, etc.).
@@ -37,7 +37,7 @@ def get_office_dirs(base_dir: str, offices: list) -> dict:
     return office_dirs
 
 
-def get_subdirectories(directory: str, filter_digits: int):
+def get_subdirectories(directory: str, filter_digits):
     # The input to this function is a directory path and an optional filter for the number of digits.
     # This function will return a list of valid subdirectories inside the given directory.
     # If filter_digits is provided, only directories with the specified digit length are returned.
@@ -141,7 +141,15 @@ def main():
         project_group_dirs = [] if (project_group_dirs is None) else project_group_dirs
         # Get the project directories
         for project_group_dir in project_group_dirs:
-            project_dirs = get_subdirectories(project_group_dir, filter_digits=None) # [\\adgce.local\projects\SSC\25000\25633]
+            project_dirs = get_subdirectories(project_group_dir, filter_digits = None) # [\\adgce.local\projects\SSC\25000\25633]
+            project_dirs = [] if (project_dirs is None) else project_dirs
+            for index, project_dir in enumerate(project_dirs): # Check if old folder structure (27170\\CVL...) or new folder structure (27170\\27170.001\\CVL...)
+                entries = os.scandir(project_dir)
+                for entry in entries:
+                    if entry.is_dir() and len(entry.name) == 9 and entry.name[-4] == ".":
+                        project_dir = entry.path
+                        project_dirs[index] = project_dir
+
             # Get the RCRD CPY directories for each discipline and collect in a dictionary of the form
             # {Office: {Discipline: [Matching Directories]}}}}
             for project_dir in project_dirs:
