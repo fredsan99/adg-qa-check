@@ -23,10 +23,10 @@ from typing import Any, Iterable
 # Configure logging for debugging purposes
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-base_dir = r"C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs" # \\adgce.local\projects
+base_dir = r"\\adgce.local\projects" # C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs
 offices = ["SSC"]
 disciplines = ["CVL"]
-days_threshold = 4 # The script will check for files modified up to this many days in the past. 
+days_threshold = 15 # The script will check for files modified up to this many days in the past. 
 ind_projects_to_scan = {"SSC": [], "SYD": ["27868", "24324"]}  # This can be used to specify individual projects to scan, if needed.
 
 

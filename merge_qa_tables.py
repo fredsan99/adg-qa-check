@@ -13,7 +13,7 @@ import openpyxl
 from openpyxl import load_workbook
 import logging
 
-MONTH = "July" # This will be used to read the correct tab from the Excel file.
+MONTH = "Aug" # This will be used to read the correct tab from the Excel file.
 CSV_FILE_PATH = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/recently_issued_folders.csv"
 EXCEL_FILE_PATH = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/tmp_excel_for_merging.xlsx"
 NEW_CSV_FILE_PATH = r"C:/Users/fsaniter/OneDrive - ADG/Desktop/Temp WIP Files/00_QA stuff/adg-qa-check/merged_output.csv"
