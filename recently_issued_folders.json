@@ -1,8 +1,46 @@
 {
     "SSC": {
-        "CVL": [
-            "\\\\adgce.local\\projects\\SSC\\28000\\28690\\CVL\\RCRD CPY\\CRNT",
-            "\\\\adgce.local\\projects\\SSC\\28000\\28690\\CVL\\RCRD CPY\\250730_01_UU"
-        ]
+        "CVL": {
+            "24324": [
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\24000\\24324\\24324.002\\CVL\\RCRD CPY",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\24000\\24324\\24324.002\\CVL\\RCRD CPY\\issued",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\24000\\24324\\24324.003\\CVL\\RCRD CPY",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\24000\\24324\\24324.003\\CVL\\RCRD CPY\\issued"
+            ],
+            "25633": [
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\25000\\25633\\CVL\\RCRD CPY\\issued",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\25000\\25633\\CVL\\RCRD CPY"
+            ],
+            "25640": [
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\25000\\25640\\CVL\\RCRD CPY",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\25000\\25640\\CVL\\RCRD CPY\\issued"
+            ],
+            "27170": [
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\27000\\27170\\27170.001\\CVL\\RCRD CPY\\issued",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\27000\\27170\\27170.001\\CVL\\RCRD CPY"
+            ],
+            "27180": [
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\27000\\27180\\27180.005\\CVL\\RCRD CPY",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\27000\\27180\\27180.005\\CVL\\RCRD CPY\\issued"
+            ],
+            "27868": [
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\27000\\27868\\CVL\\RCRD CPY\\issued",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SSC\\27000\\27868\\CVL\\RCRD CPY"
+            ]
+        }
+    },
+    "SYD": {
+        "CVL": {
+            "27868": [
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SYD\\27000\\27868\\CVL\\RCRD CPY\\issued",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SYD\\27000\\27868\\CVL\\RCRD CPY"
+            ],
+            "24324": [
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SYD\\24000\\24324\\24324.002\\CVL\\RCRD CPY\\issued",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SYD\\24000\\24324\\24324.002\\CVL\\RCRD CPY",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SYD\\24000\\24324\\24324.003\\CVL\\RCRD CPY",
+                "C:\\Users\\frede\\Desktop\\projects\\ADG QA Script\\test_dirs\\SYD\\24000\\24324\\24324.003\\CVL\\RCRD CPY\\issued"
+            ]
+        }
     }
 }

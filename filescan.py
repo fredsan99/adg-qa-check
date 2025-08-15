@@ -1,8 +1,7 @@
-import os
-import datetime
+import os, datetime, logging
 import pandas as pd
-import json, csv
-import logging
+import json
+from typing import Any, Iterable
 
 # The purpose of this script is to show which disciplines on which projects have modified files
 # in their RCRD CPY directories within the last X days.
@@ -16,7 +15,7 @@ import logging
 
 # This script will scan the RCRD CPY directories for all projects at specified offices and disciplines
 # Which offices and disciplines to scan is specified in lists defined at the top of the script.
-# The script will look for files in the RCRD CPY directories that have been modified within the last 30 days.
+# The script will look for files in the RCRD CPY directories that have been modified within the last X days.
 # The end result will be a nested dictionary of the form:
 # {Office: {Discipline: [Matching Directories]}}
 
@@ -24,10 +23,12 @@ import logging
 # Configure logging for debugging purposes
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-base_dir = r"\\adgce.local\projects"
+base_dir = r"C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs" # \\adgce.local\projects
 offices = ["SSC"]
 disciplines = ["CVL"]
-days_threshold = 4 # Set this variable to current the day of the month. The script will check for files modified ON or AFTER the cutoff date. 
+days_threshold = 4 # The script will check for files modified up to this many days in the past. 
+ind_projects_to_scan = {"SSC": [], "SYD": ["27868", "24324"]}  # This can be used to specify individual projects to scan, if needed.
+
 
 def get_office_dirs(base_dir: str, offices: list) -> dict:
     # The input to this function is a base directory and a list of office short names (SSC, GLC, etc.).
@@ -57,9 +58,79 @@ def get_subdirectories(directory: str, filter_digits):
         ]
     except PermissionError:
         logging.warning(f"Permission denied: {directory}, skipping.")
+        return []
     except Exception as e:
         logging.warning(f"Skipping {directory}: {e}")
         return []
+
+
+def assemble_ind_project_dirs(base_dir: str, ind_projects_to_scan: dict) -> dict[str, list[str]]:
+    """Returns a dictionary of individual project directories to scan."""
+    # The input to this function is a base directory and a dictionary of individual projects to scan.
+    # This function will return a dictionary with lists of project directories inside each office directory.
+    # The project folders are named after the project number given in the ind_projects_to_scan dict.
+    ind_project_dirs = {}
+    for office, projects in ind_projects_to_scan.items():
+        office_dir = os.path.join(base_dir, office)
+        ind_project_dirs[office] = []
+        for project_no in projects:
+            project_group_no = f"{project_no[:2]}000"
+            project_dir = os.path.join(office_dir, project_group_no, project_no)
+            if os.path.exists(project_dir):
+                ind_project_dirs[office].append(project_dir)
+            else:
+                logging.warning(f"Project directory {project_dir} does not exist, skipping.")
+    return ind_project_dirs
+
+
+def get_project_dirs(base_dir: str, offices: list, ind_projects_to_scan: dict):
+    """Returns a list of project directories for each office."""
+    # The input to this function is a base directory, a list of offices and a dictionary of
+    # individual projects to scan.
+    # This function will return a dictionary with lists of project directories inside each office directory.
+    # The project folders are expected to be either five-digit numbers or
+    # subdirectories of project folders with a suffix .xxx, e.g. 27170.001).
+    
+    office_dirs = get_office_dirs(base_dir, offices) # Dictionary of office directories
+    project_group_dirs: dict[str, list[str]] = {} # This will hold the project group directories for each office
+    for office, office_dir in office_dirs.items():
+        groups = get_subdirectories(office_dir, filter_digits=5)
+        project_group_dirs[office] = [] if (groups is None) else groups
+    
+    project_dirs: dict[str, list[str]] = {}
+    for office, group_dirs in project_group_dirs.items():
+        project_dirs[office] = []
+        for group_dir in group_dirs:
+            projects = get_subdirectories(group_dir, filter_digits=5)
+            if projects:
+                project_dirs[office].extend(projects)
+
+    # Now, assemble the individual project directories for each office and add to the dict
+    ind_project_dirs = assemble_ind_project_dirs(base_dir, ind_projects_to_scan)
+
+    #Merge the individual project directories into the main project directories dictionary
+    for office, ind_dirs in ind_project_dirs.items():
+        if office in project_dirs:
+            project_dirs[office].extend(ind_dirs)
+        else:
+            project_dirs[office] = list(ind_dirs)
+
+    # The dict project_dirs now contains all project directories to scan under
+    # each office under the old folder structure {"SSC": [list of project directories]}
+    # Now check each project directory to see if it has sub-projects under the 
+    # new folder structure (e.g. 27170\\27170.001\\CVL)
+    for office, proj_dirs in project_dirs.items():
+        sub_projects = []
+        for proj_dir in proj_dirs:
+            with os.scandir(proj_dir) as entries:
+                for entry in entries:
+                    if entry.is_dir() and len(entry.name) == 9 and entry.name[-4] == ".":
+                        sub_project = entry.path
+                        sub_projects.append(sub_project)
+        if sub_projects:
+            project_dirs[office].extend(sub_projects)    
+    
+    return project_dirs
 
 
 def get_rcrd_cpy_dirs(discipline: str, project_dir: str):
@@ -69,7 +140,7 @@ def get_rcrd_cpy_dirs(discipline: str, project_dir: str):
     # The directory will be of the form \\adgce.local\projects\SSC\25000\25633\CVL\RCRD CPY
     # The function will also check if the RCRD CPY directory exists. If not, it will return None.
     rcrd_cpy_dir = os.path.join(project_dir, discipline, "RCRD CPY")
-    return rcrd_cpy_dir if os.path.exists(rcrd_cpy_dir) else None
+    return rcrd_cpy_dir if os.path.isdir(rcrd_cpy_dir) else None
 
 
 def scan_directory(rcrd_cpy_dir: str, cutoff_date: datetime.datetime) -> list:
@@ -108,67 +179,102 @@ def scan_directory(rcrd_cpy_dir: str, cutoff_date: datetime.datetime) -> list:
         return []
 
 
-def master_dict_to_dataframe(master_dict: dict) -> pd.DataFrame:
-    """Converts a nested dictionary into a Pandas DataFrame."""
-    # Convert a nested dictionary (master_dict) into a structured pandas DataFrame.
-    # The master_dict is of the form {Office: {Discipline: [Matching Directories]}}
-    # The DataFrame will have columns for Office, Discipline, and Path.
-    data = [
-        (office, discipline, path)
-        for office, disciplines in master_dict.items()
-        for discipline, paths in disciplines.items()
-        for path in paths
-    ]
-    return pd.DataFrame(data, columns=["Office", "Discipline", "Path"])
+def assemble_master_dict(disciplines: list, project_dirs: dict, cutoff_date) -> dict:
+    """Assembles a master dictionary of directories for each office and discipline:
+    {office: {discipline: {project_number: [paths]}}}"""
+    # Set up master dictionary with empty lists for each discipline in each office
+    master_dict = {office: {d: {} for d in disciplines} for office in project_dirs.keys()}
+
+    for office, proj_dirs in project_dirs.items():
+        for proj_dir in proj_dirs:
+            proj_no = get_project_number_from_path(proj_dir)
+            for discipline in disciplines:
+                rcrd_cpy_dir = get_rcrd_cpy_dirs(discipline, proj_dir) # Single directory as string
+                if rcrd_cpy_dir:
+                    mod_dirs = scan_directory(rcrd_cpy_dir, cutoff_date) # [\\adgce.local\projects\SSC\25000\25633\CVL\RCRD CPY\files]
+                    # print(f"Modified directories for {office} {discipline} {project_dir}: {mod_dirs}")
+                else:
+                    mod_dirs = []
+                    # print(f"No RCRD CPY directory found for {office} {discipline}"):
+                bucket = master_dict[office][discipline].setdefault(proj_no, [])
+                bucket.extend(mod_dirs)
+    return master_dict
+
+def master_dict_to_dataframe(master_dict: dict, level_names: list[str], path_col="Path"):
+    rows = []
+
+    def walk(node, prefix):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                walk(v, prefix + [str(k)])
+        elif isinstance(node, list):
+            for leaf in node:
+                rows.append(prefix + [str(leaf)])
+        else:
+            # Fallback: treat scalar as a single leaf
+            rows.append(prefix + [str(node)])
+
+    walk(master_dict, [])
+
+    if not rows:
+        # Empty -> make a harmless empty frame
+        key_cols = level_names or ["Level1"]
+        return pd.DataFrame(columns=key_cols + [path_col])
+
+    n_key_cols = len(rows[0]) - 1
+    if level_names and len(level_names) != n_key_cols:
+        raise ValueError(f"Only {len(level_names)} column names provided but {n_key_cols} column names required")
+
+    cols = (level_names or [f"Level{i+1}" for i in range(n_key_cols)]) + [path_col]
+    return pd.DataFrame(rows, columns=cols)
+
+
+def get_project_number_from_path(path: str) -> str:
+    """Extracts the project number from a given path."""
+    # The input to this function is a path to a project directory.
+    # This function will return the project number as a string.
+
+    parts = os.path.normpath(path).split(os.sep)
+    parts_enum = enumerate(parts)
+    might_be_project_number = []
+    for i, part in parts_enum:
+        test = (part.isdigit() and len(part) == 5 and part[-3:] != "000")
+        if test:
+            might_be_project_number.append(part)
+    if len(might_be_project_number) == 1:
+        project_number = might_be_project_number[0]
+    elif len(might_be_project_number) > 1:
+        project_number = f"Multiple project numbers found: {might_be_project_number}"
+    else:
+        project_number = "No project number found"
+
+    return project_number
 
 
 def main():
     # clear command line
     os.system('cls' if os.name == 'nt' else 'clear')
 
-    # Set up master dictionary with empty lists for each discipline in each office
-    master_dict = {office: {discipline: [] for discipline in disciplines} for office in offices}
+    # Remove entries from ind_projects_to_scan that are already handled by 'offices'
+    for office_key in list(ind_projects_to_scan.keys()):
+        if office_key in offices:
+            logging.info(f"Removing '{office_key}' from ind_projects_to_scan because it's already in offices")
+            ind_projects_to_scan.pop(office_key, None)
 
     # Set the cutoff date for the scan
     cutoff_date = datetime.datetime.now() - datetime.timedelta(days=days_threshold)
 
-    # Get the office directories
-    office_dirs = get_office_dirs(base_dir, offices) # {"SSC": \\adgce.local\projects\SSC}
+    # Get the project directories
+    project_dirs = get_project_dirs(base_dir, offices, ind_projects_to_scan)
 
-    # Get the project group directories
-    for office, office_dir in office_dirs.items():
-        project_group_dirs = get_subdirectories(office_dir, filter_digits=5) # [\\adgce.local\projects\SSC\project group number]
-        project_group_dirs = [] if (project_group_dirs is None) else project_group_dirs
-        # Get the project directories
-        for project_group_dir in project_group_dirs:
-            project_dirs = get_subdirectories(project_group_dir, filter_digits = None) # [\\adgce.local\projects\SSC\25000\25633]
-            project_dirs = [] if (project_dirs is None) else project_dirs
-            for index, project_dir in enumerate(project_dirs): # Check if old folder structure (27170\\CVL...) or new folder structure (27170\\27170.001\\CVL...)
-                entries = os.scandir(project_dir)
-                for entry in entries:
-                    if entry.is_dir() and len(entry.name) == 9 and entry.name[-4] == ".":
-                        project_dir = entry.path
-                        project_dirs.append(project_dir)
-
-            # Get the RCRD CPY directories for each discipline and collect in a dictionary of the form
-            # {Office: {Discipline: [Matching Directories]}}}}
-            for project_dir in project_dirs:
-                for discipline in disciplines:
-                    rcrd_cpy_dir = get_rcrd_cpy_dirs(discipline, project_dir) # \\adgce.local\projects\SSC\25000\25633\CVL\RCRD CPY
-                    if rcrd_cpy_dir:
-                        mod_dirs = scan_directory(rcrd_cpy_dir, cutoff_date) # [\\adgce.local\projects\SSC\25000\25633\CVL\RCRD CPY\files]
-                        # print(f"Modified directories for {office} {discipline} {project_dir}: {mod_dirs}")
-                    else:
-                        mod_dirs = []
-                        # print(f"No RCRD CPY directory found for {office} {discipline}")
-                    master_dict[office][discipline].extend(mod_dirs)
+    master_dict = assemble_master_dict(disciplines, project_dirs, cutoff_date)
 
     # Write raw master_dict results to json
     with open("recently_issued_folders.json", "w") as f:
         json.dump(master_dict, f, indent=4)
 
     # Convert master_dict to a DataFrame
-    df = master_dict_to_dataframe(master_dict)
+    df = master_dict_to_dataframe(master_dict, level_names=["Office", "Discipline", "Project Number"], path_col="Path")
     print(df)
 
     # Write DataFrame to CSV

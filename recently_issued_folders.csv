@@ -1,3 +1,21 @@
-Office,Discipline,Path
-SSC,CVL,\\adgce.local\projects\SSC\28000\28690\CVL\RCRD CPY\CRNT
-SSC,CVL,\\adgce.local\projects\SSC\28000\28690\CVL\RCRD CPY\250730_01_UU
+Office,Discipline,Project Number,Path
+SSC,CVL,24324,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\24000\24324\24324.002\CVL\RCRD CPY
+SSC,CVL,24324,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\24000\24324\24324.002\CVL\RCRD CPY\issued
+SSC,CVL,24324,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\24000\24324\24324.003\CVL\RCRD CPY
+SSC,CVL,24324,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\24000\24324\24324.003\CVL\RCRD CPY\issued
+SSC,CVL,25633,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\25000\25633\CVL\RCRD CPY\issued
+SSC,CVL,25633,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\25000\25633\CVL\RCRD CPY
+SSC,CVL,25640,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\25000\25640\CVL\RCRD CPY
+SSC,CVL,25640,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\25000\25640\CVL\RCRD CPY\issued
+SSC,CVL,27170,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\27000\27170\27170.001\CVL\RCRD CPY\issued
+SSC,CVL,27170,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\27000\27170\27170.001\CVL\RCRD CPY
+SSC,CVL,27180,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\27000\27180\27180.005\CVL\RCRD CPY
+SSC,CVL,27180,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\27000\27180\27180.005\CVL\RCRD CPY\issued
+SSC,CVL,27868,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\27000\27868\CVL\RCRD CPY\issued
+SSC,CVL,27868,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SSC\27000\27868\CVL\RCRD CPY
+SYD,CVL,27868,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SYD\27000\27868\CVL\RCRD CPY\issued
+SYD,CVL,27868,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SYD\27000\27868\CVL\RCRD CPY
+SYD,CVL,24324,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SYD\24000\24324\24324.002\CVL\RCRD CPY\issued
+SYD,CVL,24324,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SYD\24000\24324\24324.002\CVL\RCRD CPY
+SYD,CVL,24324,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SYD\24000\24324\24324.003\CVL\RCRD CPY
+SYD,CVL,24324,C:\Users\frede\Desktop\projects\ADG QA Script\test_dirs\SYD\24000\24324\24324.003\CVL\RCRD CPY\issued
