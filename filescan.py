@@ -27,7 +27,16 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 base_dir = r"\\adgce.local\projects"
 offices = ["SSC"]
 disciplines = ["CVL"]
-days_threshold = 4 # Set this variable to current the day of the month. The script will check for files modified ON or AFTER the cutoff date. 
+days_threshold = 14 # Set this variable to current the day of the month. The script will check for files modified ON or AFTER the cutoff date.
+ind_jobs_include = {"SYD": ["SYD\\27000\\27868", "SYD\\24000\\24234"]} # Add individual jobs to check as ["SYD\27000\27868", ...]
+for office, jobs_list in ind_jobs_include.items():
+    jobs = []
+    jobs.extend(os.path.join(base_dir, job_dir) for job_dir in jobs_list)
+    ind_jobs_include[office] = jobs
+jobs_to_include = []
+for office, jobs in ind_jobs_include.items():
+    jobs_to_include.extend(jobs)
+logging.info(f"Individual jobs to include: {jobs_to_include}")
 
 def get_office_dirs(base_dir: str, offices: list) -> dict:
     # The input to this function is a base directory and a list of office short names (SSC, GLC, etc.).
@@ -128,6 +137,9 @@ def main():
 
     # Set up master dictionary with empty lists for each discipline in each office
     master_dict = {office: {discipline: [] for discipline in disciplines} for office in offices}
+    for office in ind_jobs_include.keys():
+        master_dict[office] = {discipline: [] for discipline in disciplines}
+
 
     # Set the cutoff date for the scan
     cutoff_date = datetime.datetime.now() - datetime.timedelta(days=days_threshold)
@@ -143,6 +155,8 @@ def main():
         for project_group_dir in project_group_dirs:
             project_dirs = get_subdirectories(project_group_dir, filter_digits = None) # [\\adgce.local\projects\SSC\25000\25633]
             project_dirs = [] if (project_dirs is None) else project_dirs
+            for dir in jobs_to_include:
+                project_dirs.append(dir)
             for index, project_dir in enumerate(project_dirs): # Check if old folder structure (27170\\CVL...) or new folder structure (27170\\27170.001\\CVL...)
                 entries = os.scandir(project_dir)
                 for entry in entries:
@@ -162,6 +176,14 @@ def main():
                         mod_dirs = []
                         # print(f"No RCRD CPY directory found for {office} {discipline}")
                     master_dict[office][discipline].extend(mod_dirs)
+    for m_office, m_discipline_dict in master_dict.items():
+        for m_discipline, m_dir in m_discipline_dict.items():
+            for office, jobs in ind_jobs_include.items():
+                if dir in jobs:
+                    master_dict[office][m_discipline].extend([dir])
+                    if dir in master_dict[m_office][discipline]:
+                        master_dict[m_office][discipline].remove(dir) 
+
 
     # Write raw master_dict results to json
     with open("recently_issued_folders.json", "w") as f:
